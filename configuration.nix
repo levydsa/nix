@@ -22,8 +22,8 @@
   boot = {
     kernel = {
       sysctl = {
-          "kernel.perf_event_paranoid" = -1;
-          "kernel.kptr_restrict" = lib.mkForce 0;
+        "kernel.perf_event_paranoid" = -1;
+        "kernel.kptr_restrict" = lib.mkForce 0;
       };
     };
     loader = {
@@ -57,14 +57,8 @@
       enable = true;
       allowedTCPPorts = [ 3000 4000 8080 ];
       allowedUDPPortRanges = [
-        {
-          from = 4000;
-          to = 4007;
-        }
-        {
-          from = 8000;
-          to = 8010;
-        }
+        { from = 4000; to = 4007; }
+        { from = 8000; to = 8010; }
       ];
     };
   };
@@ -115,18 +109,35 @@
     defaultUserShell = pkgs.zsh;
   };
 
+  documentation.dev.enable = true;
+
   xdg.portal = {
     enable = true;
-    wlr.enable = true;
+    wlr = {
+      enable = true;
+      settings = {
+        screencast = {
+          output_name = "eDP-1";
+          max_fps = 30;
+          chooser_type = "simple";
+          chooser_cmd = "${pkgs.slurp}/bin/slurp -f %o -or";
+        };
+      };
+    };
+
+    config = {
+      common = {
+        default = [ "gtk" ];
+        "org.freedesktop.impl.portal.Screencast" = [ "wlr" ];
+        "org.freedesktop.impl.portal.Screenshot" = [ "wlr" ];
+      };
+
+    };
 
     extraPortals = with pkgs; [
       xdg-desktop-portal-gtk
+      xdg-desktop-portal-kde
     ];
-  };
-
-  sound = {
-    enable = true;
-    mediaKeys.enable = true;
   };
 
   programs = {
@@ -147,7 +158,15 @@
       "/share/wayland-sessions"
     ];
     sessionVariables = {
+      XDG_SESSION_TYPE = "wayland";
+      XDG_SESSION_DESKTOP = "sway";
       XDG_CURRENT_DESKTOP = "sway";
+
+      MOZ_ENABLE_WAYLAND = "1";
+      QT_QPA_PLATFORM = "wayland";
+      SDL_VIDEODRIVER = "wayland";
+      _JAVA_AWT_WM_NONREPARENTING = "1";
+
     };
 
     localBinInPath = true;
@@ -204,9 +223,6 @@
   };
 
   services = {
-    udev.packages = [
-      pkgs.android-udev-rules
-    ];
     geoclue2.enable = true;
     gvfs.enable = true;
     tumbler.enable = true;
@@ -214,9 +230,9 @@
     udisks2.enable = true;
     udev = {
       enable = true;
+      packages = [ pkgs.android-udev-rules ];
       extraRules = ''
         SUBSYSTEM=="power_supply", ATTR{status}=="Discharging", ATTR{capacity}=="[0-10]", RUN+="${pkgs.libnotify}/bin/notify-send --urgency=critical 'Please, plug-in some power. Battery at 10%'"
-
         SUBSYSTEM=="power_supply", ATTR{status}=="Discharging", ATTR{capacity}=="[0-5]", RUN+="${pkgs.systemd}/bin/systemctl hibernate"
       '';
     };
@@ -234,7 +250,7 @@
       settings = {
         default_session = {
           user = "dante";
-          command = ''${pkgs.greetd.tuigreet}/bin/tuigreet -w 50 -c "dbus-launch river"'';
+          command = ''${pkgs.greetd.tuigreet}/bin/tuigreet -w 50 -c "exec dbus-launch river"'';
         };
       };
     };
@@ -256,6 +272,10 @@
         CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
         CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
       };
+    };
+    dbus = {
+      enable = true;
+      implementation = "dbus";
     };
   };
 

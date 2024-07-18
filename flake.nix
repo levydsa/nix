@@ -17,13 +17,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    eww = {
-      url = "github:/elkowar/eww";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     zen-workaround = {
       url = "github:levydsa/zen-workaround.nix/fix-flake";
+    };
+
+    zls = {
+      url = "github:zigtools/zls?ref=0.13.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

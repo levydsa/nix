@@ -2,17 +2,6 @@
 
   imports = [ inputs.ags.homeManagerModules.default ];
 
-  programs.ags = {
-    enable = true;
-
-    # additional packages to add to gjs's runtime
-    extraPackages = with pkgs; [
-      gtksourceview
-      webkitgtk
-      accountsservice
-    ];
-  };
-
   targets.genericLinux.enable = true;
   nixpkgs.config.allowUnfree = true;
   home = {
@@ -72,9 +61,10 @@
       swaybg
       alacritty
       wl-clipboard
-      inputs.eww.packages.${system}.default
+      # inputs.eww.packages.${system}.default
       zig-shell-completions
       zig
+      libappindicator
     ];
 
     stateVersion = "23.11";
@@ -102,8 +92,9 @@
     {
       enable = true;
       extraConfig = ''
+        systemctl --user import-environment PATH WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE
+        dbus-update-activation-environment --systemd --all
         rivertile -view-padding 5 -outer-padding 3 &
-        echo ~/.local/share/wp | entr -srn "swaybg -i ~/.local/share/wp" &
       '';
       settings = {
         background-color = "0x000000";
@@ -112,7 +103,7 @@
         border-color-unfocused = "0x888888";
         set-repeat = "50 300";
         default-layout = "rivertile";
-        spawn = [ "'ags'" ];
+        spawn = [ ];
         declare-mode = [
           "normal"
           "locked"
@@ -165,7 +156,51 @@
       };
     };
 
+  systemd.user.targets.tray = {
+    Unit = {
+      Description = "Home Manager System Tray";
+      Requires = [ "graphical-session-pre.target" ];
+    };
+  };
+
+  systemd.user.services =
+    let
+      graphical = {
+        Unit = {
+          PartOf = "graphical-session.target";
+          After = "graphical-session.target";
+        };
+        Install.WantedBy = [ "graphical-session.target" ];
+      };
+    in
+    {
+      ags = {
+        Service = {
+          Type = "exec";
+          ExecStart = "${inputs.ags.packages.${system}.default}/bin/ags";
+        };
+      } // graphical;
+
+      bg = {
+        Service = {
+          Type = "exec";
+          ExecStart = "${pkgs.swaybg}/bin/swaybg -i ${config.home.homeDirectory}/.local/share/wp";
+        };
+      } // graphical;
+    };
+
   programs = {
+    ags = {
+      enable = true;
+
+      extraPackages = with pkgs; [
+        gtksourceview
+        webkitgtk
+        accountsservice
+        libdbusmenu-gtk3
+      ];
+    };
+
     starship = {
       enable = true;
       enableZshIntegration = true;
@@ -179,9 +214,11 @@
         vscode-langservers-extracted
         tailwindcss-language-server
         lua-language-server
-        nil
+        nodePackages.typescript-language-server
+        nixd
         htmx-lsp
         gnumake
+        inputs.zls.packages.${system}.zls
       ];
     };
 
@@ -194,9 +231,7 @@
     chromium = {
       enable = true;
       package = pkgs.ungoogled-chromium;
-      commandLineArgs = [
-        "--enable-features=Vulkan"
-      ];
+      commandLineArgs = [ "--enable-features=Vulkan" ];
     };
 
     git = {
@@ -229,9 +264,9 @@
         bindkey -M menuselect 'k' vi-up-line-or-history
         bindkey -M menuselect 'l' vi-forward-char
         bindkey -M menuselect 'j' vi-down-line-or-history
+
         bindkey -v '^?' backward-delete-char
       '';
-
       shellAliases = {
         ls = "ls --color -F";
         la = "ls -lAhX --group-directories-first";
@@ -270,11 +305,11 @@
   gtk = {
     enable = true;
     theme = {
-      package = pkgs.gnome.gnome-themes-extra;
+      package = pkgs.gnome-themes-extra;
       name = "Adwaita-dark";
     };
     iconTheme = {
-      package = pkgs.gnome.adwaita-icon-theme;
+      package = pkgs.adwaita-icon-theme;
       name = "Adwaita";
     };
   };
@@ -282,8 +317,8 @@
   services = {
     gammastep = {
       enable = true;
-      provider = "geoclue2";
       tray = true;
+      provider = "geoclue2";
     };
 
     flameshot = {
