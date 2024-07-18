@@ -4,6 +4,7 @@
 
   targets.genericLinux.enable = true;
   nixpkgs.config.allowUnfree = true;
+
   home = {
     username = "dante";
     homeDirectory = "/home/${config.home.username}";
@@ -29,45 +30,106 @@
     };
 
     packages = with pkgs; [
-      dunst
-      rustup
       weechat
       thunderbird
       keepassxc
       zathura
       webcord
-      # libreoffice
-      # texliveConTeXt
-      # sile
       calibre
       krita
-      valgrind
-      kdePackages.kcachegrind
-      graphviz
       reaper
-      gradle
-      # android-studio
-      # android-tools
       obsidian
       inkscape
-      wifi-qr
-      lldb
-      lua5_1
-      luarocks
-      # obs-studio
+      obs-studio
       mpv
+      wifi-qr
 
-      wofi
       swaybg
       alacritty
-      wl-clipboard
-      # inputs.eww.packages.${system}.default
-      zig-shell-completions
+
       zig
-      libappindicator
+      zig-shell-completions
+      rustup
+      gdb
+      kdePackages.kcachegrind
+      valgrind
+      gradle
+
+      wl-clipboard
+      dunst
+      slurp
+      grim
+      wofi
     ];
 
     stateVersion = "23.11";
+  };
+
+  wayland.windowManager.hyprland = {
+    enable = true;
+    systemd.enable = true;
+    systemd.enableXdgAutostart = true;
+    settings =
+      let
+        lists = pkgs.lib.lists;
+        trivial = pkgs.lib.trivial;
+        workspaces = lists.range 1 9;
+        eachWorkspace = (f: trivial.pipe workspaces [
+          (map toString)
+          (map f)
+        ]);
+      in
+      {
+        "$mod" = "SUPER";
+        env = [
+          "XCURSOR_SIZE,24"
+          "HYPRCURSOR_SIZE,24"
+        ];
+        input = {
+          kb_layout = "br";
+          kb_model = "thinkpad";
+          sensitivity = 0;
+        };
+        general = {
+          gaps_in = 5;
+          gaps_out = 10;
+          border_size = 2;
+          "col.active_border" = "rgba(ffffffaa)";
+          "col.inactive_border" = "rgba(595959aa)";
+          resize_on_border = true;
+          layout = "master";
+
+          animation = [
+            "workspaces,1,3,default,fade"
+            "windows,1,1,default"
+          ];
+        };
+        decoration = {
+          rounding = 3;
+        };
+        bind =
+          lists.flatten [
+            [
+              "$mod, P, exec, wofi -I -S drun"
+              "$mod SHIFT, RETURN, exec, alacritty"
+              "$mod SHIFT, C, killactive,"
+              "$mod SHIFT, E, exit,"
+
+
+              "$mod, H, layoutmsg, mfact -0.05"
+              "$mod, L, layoutmsg, mfact +0.05"
+              "$mod, RETURN, layoutmsg, swapwithmaster"
+
+              "$mod, J, cyclenext,"
+              "$mod, K, cyclenext, prev"
+              ", Print, exec, grim - | wl-copy"
+              ", XF86Launch2, exec, grim -g \"$(slurp)\" - | wl-copy"
+            ]
+            (eachWorkspace (i: "$mod, ${i}, workspace, ${i}"))
+            (eachWorkspace (i: "$mod, ${i}, movetoworkspace, ${i}"))
+          ];
+        windowrulev2 = [ "suppressevent maximize, class:.*" ];
+      };
   };
 
   wayland.windowManager.river =
@@ -155,13 +217,6 @@
         };
       };
     };
-
-  systemd.user.targets.tray = {
-    Unit = {
-      Description = "Home Manager System Tray";
-      Requires = [ "graphical-session-pre.target" ];
-    };
-  };
 
   systemd.user.services =
     let
@@ -304,6 +359,16 @@
 
   gtk = {
     enable = true;
+    gtk2.configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
+    font = {
+      name = "sans";
+      size = 8;
+    };
+    cursorTheme = {
+      package = pkgs.vanilla-dmz;
+      size = 24;
+      name = "DMZ-Black";
+    };
     theme = {
       package = pkgs.gnome-themes-extra;
       name = "Adwaita-dark";
@@ -321,9 +386,7 @@
       provider = "geoclue2";
     };
 
-    flameshot = {
-      enable = true;
-    };
+    flameshot.enable = true;
 
     syncthing = {
       enable = true;

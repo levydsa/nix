@@ -20,12 +20,12 @@
   };
 
   boot = {
-    kernel = {
-      sysctl = {
-        "kernel.perf_event_paranoid" = -1;
-        "kernel.kptr_restrict" = lib.mkForce 0;
-      };
-    };
+    # kernel = {
+    #   sysctl = {
+    #     "kernel.perf_event_paranoid" = -1;
+    #     "kernel.kptr_restrict" = lib.mkForce 0;
+    #   };
+    # };
     loader = {
       efi = {
         canTouchEfiVariables = true;
@@ -75,10 +75,11 @@
     };
   };
 
-  time.hardwareClockInLocalTime = true;
-  time.timeZone = "America/Recife";
-
   i18n.defaultLocale = "en_US.UTF-8";
+  time = {
+    hardwareClockInLocalTime = true;
+    timeZone = "America/Recife";
+  };
 
   console = {
     font = "Lat2-Terminus16";
@@ -100,39 +101,21 @@
   };
 
   virtualisation.docker.enable = true;
+  documentation.dev.enable = true;
 
   users = {
     users.dante = {
       isNormalUser = true;
       extraGroups = [ "wheel" "networkmanager" "video" "adbusers" "docker" ];
+      hashedPassword = "$y$j9T$.a19aFz63xukXlPCKuCmX.$PEdxJv0Ow1U94JvNE6yZ61QuSqqT0F1.AaEey6rKQy8";
     };
     defaultUserShell = pkgs.zsh;
   };
 
-  documentation.dev.enable = true;
 
   xdg.portal = {
     enable = true;
-    wlr = {
-      enable = true;
-      settings = {
-        screencast = {
-          output_name = "eDP-1";
-          max_fps = 30;
-          chooser_type = "simple";
-          chooser_cmd = "${pkgs.slurp}/bin/slurp -f %o -or";
-        };
-      };
-    };
-
-    config = {
-      common = {
-        default = [ "gtk" ];
-        "org.freedesktop.impl.portal.Screencast" = [ "wlr" ];
-        "org.freedesktop.impl.portal.Screenshot" = [ "wlr" ];
-      };
-
-    };
+    wlr.enable = true;
 
     extraPortals = with pkgs; [
       xdg-desktop-portal-gtk
@@ -146,6 +129,7 @@
     nix-ld.enable = true;
     adb.enable = true;
     river.enable = true;
+    hyprland.enable = true;
     git.enable = true;
     zsh.enable = true;
   };
@@ -167,6 +151,7 @@
       SDL_VIDEODRIVER = "wayland";
       _JAVA_AWT_WM_NONREPARENTING = "1";
 
+      NIXOS_OZONE_WL = 1;
     };
 
     localBinInPath = true;
@@ -228,14 +213,14 @@
     tumbler.enable = true;
     openssh.enable = true;
     udisks2.enable = true;
-    udev = {
-      enable = true;
-      packages = [ pkgs.android-udev-rules ];
-      extraRules = ''
-        SUBSYSTEM=="power_supply", ATTR{status}=="Discharging", ATTR{capacity}=="[0-10]", RUN+="${pkgs.libnotify}/bin/notify-send --urgency=critical 'Please, plug-in some power. Battery at 10%'"
-        SUBSYSTEM=="power_supply", ATTR{status}=="Discharging", ATTR{capacity}=="[0-5]", RUN+="${pkgs.systemd}/bin/systemctl hibernate"
-      '';
-    };
+    # udev = {
+    #   enable = true;
+    #   packages = [ pkgs.android-udev-rules ];
+    #   extraRules = ''
+    #     SUBSYSTEM=="power_supply", ATTR{status}=="Discharging", ATTR{capacity}=="[0-10]", RUN+="${pkgs.libnotify}/bin/notify-send --urgency=critical 'Please, plug-in some power. Battery at 10%'"
+    #     SUBSYSTEM=="power_supply", ATTR{status}=="Discharging", ATTR{capacity}=="[0-5]", RUN+="${pkgs.systemd}/bin/systemctl hibernate"
+    #   '';
+    # };
     printing = {
       enable = true;
       drivers = with pkgs; [ epson-escpr ];
@@ -245,15 +230,15 @@
       alsa.enable = true;
       pulse.enable = true;
     };
-    greetd = {
-      enable = true;
-      settings = {
-        default_session = {
-          user = "dante";
-          command = ''${pkgs.greetd.tuigreet}/bin/tuigreet -w 50 -c "exec dbus-launch river"'';
-        };
-      };
-    };
+    # greetd = {
+    #   enable = true;
+    #   settings = {
+    #     default_session = {
+    #       user = "dante";
+    #       command = ''${pkgs.greetd.tuigreet}/bin/tuigreet -w 50 -c "exec dbus-launch river"'';
+    #     };
+    #   };
+    # };
     avahi = {
       enable = true;
       nssmdns4 = true;
