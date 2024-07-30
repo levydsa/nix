@@ -27,9 +27,12 @@
 
       ANDROID_HOME = "${xdg.dataHome}/android";
       GRADLE_USER_HOME = "${xdg.dataHome}/gradle";
+
+      WLR_NO_HARDWARE_CURSORS = "1";
     };
 
     packages = with pkgs; [
+      google-chrome
       weechat
       thunderbird
       keepassxc
@@ -43,6 +46,7 @@
       obs-studio
       mpv
       wifi-qr
+      hledger
 
       swaybg
       alacritty
@@ -54,6 +58,8 @@
       kdePackages.kcachegrind
       valgrind
       gradle
+
+      slack
 
       wl-clipboard
       dunst
@@ -107,6 +113,15 @@
         decoration = {
           rounding = 3;
         };
+        bindm = [
+          "$mod, mouse:272, movewindow"
+        ];
+        binde = [
+          '', XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_SINK@ 2%+''
+          '', XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_SINK@ 2%-''
+          '', XF86MonBrightnessUp, exec, brightnessctl set 2%+''
+          '', XF86MonBrightnessDown, exec, brightnessctl set 2%-''
+        ];
         bind =
           lists.flatten [
             [
@@ -115,18 +130,23 @@
               "$mod SHIFT, C, killactive,"
               "$mod SHIFT, E, exit,"
 
-
               "$mod, H, layoutmsg, mfact -0.05"
               "$mod, L, layoutmsg, mfact +0.05"
               "$mod, RETURN, layoutmsg, swapwithmaster"
 
               "$mod, J, cyclenext,"
               "$mod, K, cyclenext, prev"
-              ", Print, exec, grim - | wl-copy"
-              ", XF86Launch2, exec, grim -g \"$(slurp)\" - | wl-copy"
+
+              "$mod, SPACE, togglefloating"
+
+              '', Print, exec, grim - | wl-copy''
+              '', XF86Launch2, exec, grim -g "$(slurp)" - | wl-copy''
+
+              '', XF86AudioMute, exec, wpctl set-mute @DEFAULT_SINK@ toggle''
+              '', XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_SOURCE@ toggle''
             ]
             (eachWorkspace (i: "$mod, ${i}, workspace, ${i}"))
-            (eachWorkspace (i: "$mod, ${i}, movetoworkspace, ${i}"))
+            (eachWorkspace (i: "$mod SHIFT, ${i}, movetoworkspacesilent, ${i}"))
           ];
         windowrulev2 = [ "suppressevent maximize, class:.*" ];
       };
@@ -269,8 +289,10 @@
         vscode-langservers-extracted
         tailwindcss-language-server
         lua-language-server
-        nodePackages.typescript-language-server
-        nixd
+        kotlin-language-server
+        typescript
+        nodePackages_latest.typescript-language-server
+        nil
         htmx-lsp
         gnumake
         inputs.zls.packages.${system}.zls
@@ -342,6 +364,16 @@
   xdg = {
     enable = true;
     systemDirs.data = [ "/run/current-system/sw/share/" ];
+    userDirs = {
+      createDirectories = true;
+      desktop = null;
+      templates = null;
+      publicShare = null;
+      documents = "${config.home.homeDirectory}/doc";
+      download = "${config.home.homeDirectory}/dl";
+      pictures = "${config.home.homeDirectory}/pic";
+      music = "${config.home.homeDirectory}/mu";
+    };
   };
 
   dconf = {
@@ -360,10 +392,6 @@
   gtk = {
     enable = true;
     gtk2.configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
-    font = {
-      name = "sans";
-      size = 8;
-    };
     cursorTheme = {
       package = pkgs.vanilla-dmz;
       size = 24;
@@ -374,23 +402,12 @@
       name = "Adwaita-dark";
     };
     iconTheme = {
-      package = pkgs.adwaita-icon-theme;
-      name = "Adwaita";
+      package = pkgs.morewaita-icon-theme;
+      name = "MoreWaita";
     };
   };
 
   services = {
-    gammastep = {
-      enable = true;
-      tray = true;
-      provider = "geoclue2";
-    };
-
-    flameshot.enable = true;
-
-    syncthing = {
-      enable = true;
-      tray.enable = true;
-    };
+    syncthing.enable = true;
   };
 }

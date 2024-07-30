@@ -7,18 +7,6 @@
     ./hardware.nix
   ];
 
-  system.autoUpgrade = {
-    enable = true;
-    flake = inputs.self.outPath;
-    flags = [
-      "--update-input"
-      "nixpkgs"
-      "-L"
-    ];
-    dates = "daily";
-    randomizedDelaySec = "45min";
-  };
-
   boot = {
     # kernel = {
     #   sysctl = {
@@ -26,6 +14,7 @@
     #     "kernel.kptr_restrict" = lib.mkForce 0;
     #   };
     # };
+    kernelPackages = pkgs.linuxPackages_zen;
     loader = {
       efi = {
         canTouchEfiVariables = true;
@@ -48,7 +37,11 @@
     opentabletdriver.enable = true;
   };
 
-  powerManagement.powertop.enable = true;
+  powerManagement = {
+    enable = true;
+    cpuFreqGovernor = "ondemand";
+    powertop.enable = true;
+  };
 
   networking = {
     hostName = "box";
@@ -68,14 +61,10 @@
       experimental-features = [ "nix-command" "flakes" ];
       use-xdg-base-directories = true;
     };
-    gc = {
-      automatic = true;
-      dates = "daily";
-      options = "--delete-older-than 2d";
-    };
   };
 
   i18n.defaultLocale = "en_US.UTF-8";
+
   time = {
     hardwareClockInLocalTime = true;
     timeZone = "America/Recife";
@@ -98,6 +87,7 @@
         }
       ];
     };
+    pam.services.gtklock = {};
   };
 
   virtualisation.docker.enable = true;
@@ -107,11 +97,11 @@
     users.dante = {
       isNormalUser = true;
       extraGroups = [ "wheel" "networkmanager" "video" "adbusers" "docker" ];
-      hashedPassword = "$y$j9T$.a19aFz63xukXlPCKuCmX.$PEdxJv0Ow1U94JvNE6yZ61QuSqqT0F1.AaEey6rKQy8";
+      hashedPassword = "$y$j9T$/KahWkCG3cIDb3p/MxzBq.$zthD423/kWwaxHbqMmu474zE4FfFdDTAJxBlgIkn9pB";
     };
     defaultUserShell = pkgs.zsh;
+    mutableUsers = false;
   };
-
 
   xdg.portal = {
     enable = true;
@@ -138,23 +128,11 @@
     shells = with pkgs; [ zsh ];
     pathsToLink = [
       "/share/zsh"
-      "/share/sile"
       "/share/wayland-sessions"
     ];
-    sessionVariables = {
-      XDG_SESSION_TYPE = "wayland";
-      XDG_SESSION_DESKTOP = "sway";
-      XDG_CURRENT_DESKTOP = "sway";
-
-      MOZ_ENABLE_WAYLAND = "1";
-      QT_QPA_PLATFORM = "wayland";
-      SDL_VIDEODRIVER = "wayland";
-      _JAVA_AWT_WM_NONREPARENTING = "1";
-
-      NIXOS_OZONE_WL = 1;
-    };
 
     localBinInPath = true;
+    sessionVariables.NIXOS_OZONE_WL = 1;
 
     systemPackages = with pkgs; [
       mold
@@ -208,19 +186,12 @@
   };
 
   services = {
+    upower.enable = true;
     geoclue2.enable = true;
     gvfs.enable = true;
     tumbler.enable = true;
     openssh.enable = true;
     udisks2.enable = true;
-    # udev = {
-    #   enable = true;
-    #   packages = [ pkgs.android-udev-rules ];
-    #   extraRules = ''
-    #     SUBSYSTEM=="power_supply", ATTR{status}=="Discharging", ATTR{capacity}=="[0-10]", RUN+="${pkgs.libnotify}/bin/notify-send --urgency=critical 'Please, plug-in some power. Battery at 10%'"
-    #     SUBSYSTEM=="power_supply", ATTR{status}=="Discharging", ATTR{capacity}=="[0-5]", RUN+="${pkgs.systemd}/bin/systemctl hibernate"
-    #   '';
-    # };
     printing = {
       enable = true;
       drivers = with pkgs; [ epson-escpr ];
@@ -230,15 +201,15 @@
       alsa.enable = true;
       pulse.enable = true;
     };
-    # greetd = {
-    #   enable = true;
-    #   settings = {
-    #     default_session = {
-    #       user = "dante";
-    #       command = ''${pkgs.greetd.tuigreet}/bin/tuigreet -w 50 -c "exec dbus-launch river"'';
-    #     };
-    #   };
-    # };
+    greetd = {
+      enable = true;
+      settings = {
+        default_session = {
+          user = "dante";
+          command = ''${pkgs.hyprland}/bin/hyprland'';
+        };
+      };
+    };
     avahi = {
       enable = true;
       nssmdns4 = true;

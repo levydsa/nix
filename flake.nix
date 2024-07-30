@@ -24,10 +24,19 @@
     zls = {
       url = "github:zigtools/zls?ref=0.13.0";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
     };
 
-    ags.url = "github:Aylur/ags";
-    flow.url = "github:levydsa/flow";
+    ags = {
+      url = "github:Aylur/ags";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    flow = {
+      url = "github:levydsa/flow";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
   };
   outputs =
     { self, flake-utils, home-manager, nixpkgs, zen-workaround, ... } @ inputs:
@@ -39,6 +48,21 @@
     in
     {
       formatter = pkgs.nixpkgs-fmt;
+      devShells.default = with pkgs; mkShell {
+        nativeBuildInputs = [
+          pkg-config
+          zig
+          tcl
+          cmake
+          gnumake
+          clang
+          jdk21
+          rustPlatform.bindgenHook
+          wasmtime
+          kotlin
+        ];
+        buildInputs = [ icu.dev zlib.dev ];
+      };
       packages.nixosConfigurations.box = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
@@ -56,6 +80,5 @@
           }
         ];
       };
-    }))
-    // { };
+    }));
 }
