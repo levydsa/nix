@@ -80,5 +80,21 @@
           }
         ];
       };
+      packages.nixosConfigurations.macvm = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./macvm-configuration.nix
+          home-manager.nixosModules.default
+          {
+            home-manager = {
+              extraSpecialArgs = { inherit inputs system; };
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.dante = import ./macvm-home.nix;
+              backupFileExtension = "backup";
+            };
+          }
+        ];
+      };
     }));
 }
