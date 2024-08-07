@@ -32,15 +32,24 @@
 
   nixpkgs.config.allowUnfree = true;
 
+  systemd.services = {
+    systemd-udev-settle.enable = false;
+    NetworkManager-wait-online.enable = false;
+  };
+
   hardware = {
     sane.enable = true;
-    opentabletdriver.enable = true;
+    # opentabletdriver.enable = true;
+    bluetooth = {
+      enable = true;
+      powerOnBoot = true;
+    };
   };
 
   powerManagement = {
     enable = true;
     cpuFreqGovernor = "ondemand";
-    powertop.enable = true;
+    # powertop.enable = true;
   };
 
   networking = {
@@ -49,10 +58,10 @@
     firewall = {
       enable = true;
       allowedTCPPorts = [ 3000 4000 8080 ];
-      allowedUDPPortRanges = [
-        { from = 4000; to = 4007; }
-        { from = 8000; to = 8010; }
-      ];
+        allowedUDPPortRanges = [
+          { from = 4000; to = 4007; }
+          { from = 8000; to = 8010; }
+        ];
     };
   };
 
@@ -162,6 +171,11 @@
       libnotify
 
       brightnessctl
+
+      greetd.gtkgreet
+      wacomtablet
+      xf86_input_wacom
+      cage
     ];
   };
 
@@ -186,6 +200,7 @@
   };
 
   services = {
+    blueman.enable = true;
     upower.enable = true;
     geoclue2.enable = true;
     gvfs.enable = true;
@@ -210,12 +225,12 @@
         };
       };
     };
-    avahi = {
-      enable = true;
-      nssmdns4 = true;
-      nssmdns6 = true;
-      openFirewall = true;
-    };
+    # avahi = {
+    #   enable = true;
+    #   nssmdns4 = true;
+    #   nssmdns6 = true;
+    #   openFirewall = true;
+    # };
     tlp = {
       enable = true;
       settings = {

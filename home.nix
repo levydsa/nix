@@ -25,7 +25,7 @@
       # Puts '.python_history' somewhere else
       PYTHONSTARTUP = "${xdg.configHome}/python/startup.py";
 
-      ANDROID_HOME = "${xdg.dataHome}/android";
+      ANDROID_HOME = "${config.home.homeDirectory}/Android/Sdk";
       GRADLE_USER_HOME = "${xdg.dataHome}/gradle";
 
       WLR_NO_HARDWARE_CURSORS = "1";
@@ -51,13 +51,18 @@
       swaybg
       alacritty
 
+      python3
       zig
-      zig-shell-completions
       rustup
+      protobuf
+
+      jdk21
+      gradle
+      android-studio
+
       gdb
       kdePackages.kcachegrind
       valgrind
-      gradle
 
       slack
 
@@ -109,6 +114,10 @@
             "workspaces,1,3,default,fade"
             "windows,1,1,default"
           ];
+        };
+        misc = {
+          disable_hyprland_logo = true;
+          disable_splash_rendering = true;
         };
         decoration = {
           rounding = 3;
@@ -292,6 +301,7 @@
         kotlin-language-server
         typescript
         nodePackages_latest.typescript-language-server
+        jdt-language-server
         nil
         htmx-lsp
         gnumake
