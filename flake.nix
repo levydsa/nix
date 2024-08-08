@@ -2,10 +2,7 @@
   description = "nixos config flake";
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-
-    flake-utils = {
-      url = "github:numtide/flake-utils";
-    };
+    flake-utils.url = "github:numtide/flake-utils";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -15,10 +12,6 @@
     neovim-nightly = {
       url = "github:nix-community/neovim-nightly-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    zen-workaround = {
-      url = "github:levydsa/zen-workaround.nix/fix-flake";
     };
 
     zls = {
@@ -37,13 +30,22 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };
+
+    darwin = {
+      url = "github:lnl7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs =
-    { self, flake-utils, home-manager, nixpkgs, zen-workaround, ... } @ inputs:
+    { self, flake-utils, home-manager, nixpkgs, darwin, ... } @ inputs:
     (flake-utils.lib.eachDefaultSystem (system:
     let
-      pkgs = import nixpkgs {
-        inherit system;
+      pkgs = import nixpkgs { inherit system; };
+      home = {
+        extraSpecialArgs = { inherit inputs system; };
+        useGlobalPkgs = true;
+        useUserPackages = true;
+        backupFileExtension = "backup";
       };
     in
     {
@@ -63,38 +65,37 @@
         ];
         buildInputs = [ icu.dev zlib.dev ];
       };
-      packages.nixosConfigurations.box = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
-        modules = [
-          ./configuration.nix
-          home-manager.nixosModules.default
-          zen-workaround.nixosModules.default
-          {
-            home-manager = {
-              extraSpecialArgs = { inherit inputs system; };
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              users.dante = import ./home.nix;
-              backupFileExtension = "backup";
-            };
-          }
-        ];
-      };
-      packages.nixosConfigurations.macvm = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
-        modules = [
-          ./macvm-configuration.nix
-          home-manager.nixosModules.default
-          {
-            home-manager = {
-              extraSpecialArgs = { inherit inputs system; };
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              users.dante = import ./macvm-home.nix;
-              backupFileExtension = "backup";
-            };
-          }
-        ];
+
+      packages = {
+        darwinConfigurations.macbook = darwin.lib.darwinSystem {
+          system = "aarch64-darwin";
+          modules = [
+            ./macbook/configuration.nix
+            home-manager.darwinModules.home-manager
+          ];
+        };
+        nixosConfigurations = {
+          box = nixpkgs.lib.nixosSystem {
+            specialArgs = { inherit inputs; };
+            modules = [
+              ./thinkpad/configuration.nix
+              home-manager.nixosModules.default
+              {
+                home-manager = { users.dante = import ./thinkpad/home.nix; } // home;
+              }
+            ];
+          };
+          macvm = nixpkgs.lib.nixosSystem {
+            specialArgs = { inherit inputs; };
+            modules = [
+              ./macbook-vm/configuration.nix
+              home-manager.nixosModules.default
+              {
+                home-manager = { users.dante = import ./macbook-vm/home.nix; } // home;
+              }
+            ];
+          };
+        };
       };
     }));
 }

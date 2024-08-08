@@ -4,17 +4,13 @@
 , ...
 }: {
   imports = [
-    ./macvm-hardware.nix
+    ./hardware.nix
   ];
 
   system.autoUpgrade = {
     enable = true;
     flake = inputs.self.outPath;
-    flags = [
-      "--update-input"
-      "nixpkgs"
-      "-L"
-    ];
+    flags = [ "--update-input" "nixpkgs" "-L" ];
     dates = "daily";
     randomizedDelaySec = "45min";
   };
@@ -36,11 +32,6 @@
   };
 
   nixpkgs.config.allowUnfree = true;
-
-  hardware = {
-    sane.enable = true;
-    opentabletdriver.enable = true;
-  };
 
   networking = {
     hostName = "macvm";
@@ -68,10 +59,7 @@
   };
 
   i18n.defaultLocale = "en_US.UTF-8";
-  time = {
-    hardwareClockInLocalTime = true;
-    timeZone = "America/Recife";
-  };
+  time.timeZone = "America/Recife";
 
   console.font = "Lat2-Terminus16";
 
@@ -116,9 +104,7 @@
     thunar.enable = true;
     xfconf.enable = true;
     nix-ld.enable = true;
-    adb.enable = true;
     river.enable = true;
-    hyprland.enable = true;
     git.enable = true;
     zsh.enable = true;
   };
@@ -164,9 +150,6 @@
       ripgrep
       fd
 
-      greetd.tuigreet
-      cpupower-gui
-
       just
 
       inputs.flow.packages.${system}.default
@@ -199,7 +182,6 @@
   services = {
     qemuGuest.enable = true;
     spice-vdagentd.enable = true;
-    geoclue2.enable = true;
     gvfs.enable = true;
     tumbler.enable = true;
     openssh.enable = true;
@@ -218,29 +200,6 @@
     #     };
     #   };
     # };
-    avahi = {
-      enable = true;
-      nssmdns4 = true;
-      nssmdns6 = true;
-      openFirewall = true;
-    };
-    tlp = {
-      enable = true;
-      settings = {
-        START_CHARGE_THRESH_BAT0 = 75;
-        STOP_CHARGE_THRESH_BAT0 = 80;
-
-        CPU_SCALING_GOVERNOR_ON_AC = "performance";
-        CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
-
-        CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
-        CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
-      };
-    };
-    dbus = {
-      enable = true;
-      implementation = "dbus";
-    };
   };
 
   system.stateVersion = "23.11";

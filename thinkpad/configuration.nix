@@ -58,10 +58,10 @@
     firewall = {
       enable = true;
       allowedTCPPorts = [ 3000 4000 8080 ];
-        allowedUDPPortRanges = [
-          { from = 4000; to = 4007; }
-          { from = 8000; to = 8010; }
-        ];
+      allowedUDPPortRanges = [
+        { from = 4000; to = 4007; }
+        { from = 8000; to = 8010; }
+      ];
     };
   };
 
@@ -96,7 +96,7 @@
         }
       ];
     };
-    pam.services.gtklock = {};
+    pam.services.gtklock = { };
   };
 
   virtualisation.docker.enable = true;

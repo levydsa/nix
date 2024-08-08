@@ -42,6 +42,26 @@
         "type": "github"
       }
     },
+    "darwin": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1722924007,
+        "narHash": "sha256-+CQDamNwqO33REJLft8c26NbUi2Td083hq6SvAm2xkU=",
+        "owner": "lnl7",
+        "repo": "nix-darwin",
+        "rev": "91010a5613ffd7ee23ee9263213157a1c422b705",
+        "type": "github"
+      },
+      "original": {
+        "owner": "lnl7",
+        "repo": "nix-darwin",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -376,12 +396,12 @@
     "root": {
       "inputs": {
         "ags": "ags",
+        "darwin": "darwin",
         "flake-utils": "flake-utils",
         "flow": "flow",
         "home-manager": "home-manager",
         "neovim-nightly": "neovim-nightly",
         "nixpkgs": "nixpkgs",
-        "zen-workaround": "zen-workaround",
         "zls": "zls"
       }
     },
@@ -427,22 +447,6 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
-        "type": "github"
-      }
-    },
-    "zen-workaround": {
-      "locked": {
-        "lastModified": 1719766423,
-        "narHash": "sha256-Zk3BULasXvPYz5pvNWyTQd8AxEu2uzm/MIVv9/Iloac=",
-        "owner": "levydsa",
-        "repo": "zen-workaround.nix",
-        "rev": "3a65009ea7983e008a4c4dff165503c0e2f3c8cb",
-        "type": "github"
-      },
-      "original": {
-        "owner": "levydsa",
-        "ref": "fix-flake",
-        "repo": "zen-workaround.nix",
         "type": "github"
       }
     },
