@@ -35,9 +35,11 @@
       url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    mac-app-util.url = "github:hraban/mac-app-util";
   };
   outputs =
-    { self, flake-utils, home-manager, nixpkgs, darwin, ... } @ inputs:
+    { self, flake-utils, home-manager, nixpkgs, darwin, mac-app-util, ... } @ inputs:
     (flake-utils.lib.eachDefaultSystem (system:
     let
       pkgs = import nixpkgs { inherit system; };
@@ -71,7 +73,11 @@
           system = "aarch64-darwin";
           modules = [
             ./macbook/configuration.nix
+            mac-app-util.darwinModules.default
             home-manager.darwinModules.home-manager
+            {
+              home-manager = { users.levy = import ./macbook/home.nix; } // home;
+            }
           ];
         };
         nixosConfigurations = {
