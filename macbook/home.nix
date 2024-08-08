@@ -1,8 +1,9 @@
-{ config, pkgs, inputs, system, ... }: {
+{ config, pkgs, inputs, ... }: {
   nixpkgs.config.allowUnfree = true;
 
   imports = [
     inputs.mac-app-util.homeManagerModules.default
+    ../shared/home/nvim.nix
   ];
 
   home = {
@@ -24,15 +25,8 @@
     };
 
     packages = with pkgs; [
-    #   thunderbird
-    #   calibre
-    #   krita
-    #   obsidian
-    #   inkscape
-    #   obs-studio
-    #   mpv
-    #   hledger
-    #  protobuf
+      hledger
+      protobuf
 
       zig
       rustup
@@ -53,25 +47,6 @@
     starship = {
       enable = true;
       enableZshIntegration = true;
-    };
-
-    neovim = {
-      package = inputs.neovim-nightly.packages.${system}.neovim;
-      enable = true;
-      defaultEditor = true;
-      extraPackages = with pkgs; [
-        vscode-langservers-extracted
-        tailwindcss-language-server
-        lua-language-server
-        kotlin-language-server
-        typescript
-        nodePackages_latest.typescript-language-server
-        jdt-language-server
-        nil
-        htmx-lsp
-        gnumake
-        inputs.zls.packages.${system}.zls
-      ];
     };
 
     direnv = {
