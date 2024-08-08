@@ -38,7 +38,9 @@
     enable = true;
     autoUpdate = true;
     casks = [
+      "android-studio"
       "hammerspoon"
+      "mac-mouse-fix"
       "eloston-chromium"
       "amethyst"
       "alfred"

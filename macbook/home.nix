@@ -1,7 +1,9 @@
 { config, pkgs, inputs, system, ... }: {
   nixpkgs.config.allowUnfree = true;
 
-  imports = [ inputs.mac-app-util.homeManagerModules.default ];
+  imports = [
+    inputs.mac-app-util.homeManagerModules.default
+  ];
 
   home = {
     username = "levy";
@@ -23,7 +25,6 @@
 
     packages = with pkgs; [
     #   thunderbird
-    #   discord
     #   calibre
     #   krita
     #   obsidian
@@ -31,32 +32,21 @@
     #   obs-studio
     #   mpv
     #   hledger
+    #  protobuf
 
+      zig
+      rustup
 
-    #   zig
-    #   rustup
-    #   protobuf
+      jdk21
+      gradle
 
-    #   jdk21
-    #   gradle
-    #   android-studio
-
+      discord
       keepassxc
       python3
-      alacritty
       slack
     ];
 
     stateVersion = "23.11";
-  };
-
-  fonts.fontconfig = {
-    enable = true;
-    defaultFonts = {
-      serif = [ "Source Serif Pro" "Symbols Nerd Font" ];
-      sansSerif = [ "Source Sans Pro" "Symbols Nerd Font" ];
-      monospace = [ "Hack" "Symbols Nerd Font" ];
-    };
   };
 
   programs = {
@@ -89,12 +79,6 @@
       nix-direnv.enable = true;
       enableZshIntegration = true;
     };
-
-    #chromium = {
-    #  enable = true;
-    #  package = pkgs.ungoogled-chromium;
-    #  commandLineArgs = [ "--enable-features=Vulkan" ];
-    #};
 
     git = {
       enable = true;
@@ -131,7 +115,7 @@
       '';
       shellAliases = {
         ls = "ls --color -F";
-        la = "ls -lAhX --group-directories-first";
+        la = "ls -lAh";
         wget = "wget --hsts-file=$XDG_DATA_HOME/wget-hsts";
         dof = "git --git-dir=$HOME/.dotfiles --work-tree=$HOME";
       };
@@ -140,6 +124,45 @@
         size = 10000;
         ignoreDups = true;
         path = "${config.xdg.dataHome}/zsh/history";
+      };
+    };
+
+    alacritty = {
+      enable = true;
+      settings = {
+        font.size = 9;
+
+        colors.primary = {
+          background = "#080808";
+          foreground = "#c6c6c6";
+        };
+
+        window = {
+          opacity = 0.92;
+          blur = true;
+        };
+
+        colors.normal = {
+          black   = "#323437";
+          red     = "#ff5454";
+          green   = "#8cc85f";
+          yellow  = "#e3c78a";
+          blue    = "#80a0ff";
+          magenta = "#cf87e8";
+          cyan    = "#79dac8";
+          white   = "#c6c6c6";
+        };
+
+        colors.bright = {
+          black   = "#323437";
+          red     = "#ff5454";
+          green   = "#8cc85f";
+          yellow  = "#e3c78a";
+          blue    = "#80a0ff";
+          magenta = "#cf87e8";
+          cyan    = "#79dac8";
+          white   = "#c6c6c6";
+        };
       };
     };
 
