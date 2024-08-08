@@ -23,6 +23,15 @@
     zsh.enable = true;
   };
 
+  fonts.packages = with pkgs; [
+    noto-fonts
+    noto-fonts-cjk
+    hack-font
+    source-sans-pro
+    source-serif-pro
+    (nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })
+  ];
+
   environment.systemPackages = with pkgs; [ neovim git ];
 
   homebrew = {

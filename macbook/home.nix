@@ -50,6 +50,19 @@
     stateVersion = "23.11";
   };
 
+  fonts.fontconfig = {
+    enable = true;
+    defaultFonts = {
+      hinting.style = "full";
+      subpixel.rgba = "rgb";
+      defaultFonts = {
+        serif = [ "Source Serif Pro" "Symbols Nerd Font" ];
+        sansSerif = [ "Source Sans Pro" "Symbols Nerd Font" ];
+        monospace = [ "Hack" "Symbols Nerd Font" ];
+      };
+    };
+  };
+
   programs = {
     starship = {
       enable = true;
