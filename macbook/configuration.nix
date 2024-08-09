@@ -1,14 +1,11 @@
 { pkgs, ... }:
 {
-  services = {
-    nix-daemon = {
-      enable = true;
-      # package = pkgs.nixFlakes;
+  nixpkgs = {
+    config = {
+      allowUnsupportedSystem = true;
+      allowUnfree = true;
     };
   };
-
-  nixpkgs.config.allowUnsupportedSystem = true;
-  nixpkgs.config.allowUnfree = true;
 
   users.users.levy.home = "/Users/levy";
 
@@ -19,20 +16,16 @@
     };
   };
 
-  programs = {
-    zsh.enable = true;
-  };
-
   fonts.packages = with pkgs; [
     noto-fonts
     noto-fonts-cjk
-    hack-font
-    source-sans-pro
-    source-serif-pro
-    (nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })
+    (nerdfonts.override { fonts = [
+      "NerdFontsSymbolsOnly"
+      "Hack"
+    ]; })
   ];
 
-  environment.systemPackages = with pkgs; [ neovim git ];
+  services.nix-daemon.enable = true;
 
   homebrew = {
     enable = true;

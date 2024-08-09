@@ -1,6 +1,12 @@
 { config, pkgs, inputs, system, ... }: {
 
-  imports = [ inputs.ags.homeManagerModules.default ];
+  imports = [
+    inputs.ags.homeManagerModules.default
+    ../shared/home/nvim.nix
+    ../shared/home/starship.nix
+    ../shared/home/alacritty.nix
+    ../shared/home/zsh.nix
+  ];
 
   targets.genericLinux.enable = true;
   nixpkgs.config.allowUnfree = true;
@@ -195,12 +201,7 @@
         set-repeat = "50 300";
         default-layout = "rivertile";
         spawn = [ ];
-        declare-mode = [
-          "normal"
-          "locked"
-          "passthrough"
-        ];
-
+        declare-mode = [ "normal" "locked" "passthrough" ];
         keyboard-layout = "-model thinkpad br";
 
         map-pointer = {
@@ -285,25 +286,6 @@
       ];
     };
 
-    neovim = {
-      package = inputs.neovim-nightly.packages.${system}.neovim;
-      enable = true;
-      defaultEditor = true;
-      extraPackages = with pkgs; [
-        vscode-langservers-extracted
-        tailwindcss-language-server
-        lua-language-server
-        kotlin-language-server
-        typescript
-        nodePackages_latest.typescript-language-server
-        jdt-language-server
-        nil
-        htmx-lsp
-        gnumake
-        inputs.zls.packages.${system}.zls
-      ];
-    };
-
     direnv = {
       enable = true;
       nix-direnv.enable = true;
@@ -320,47 +302,6 @@
       enable = true;
       userName = "Levy A.";
       userEmail = "levyddsa@gmail.com";
-    };
-
-    zsh = {
-      enable = true;
-      autocd = true;
-      dotDir = ".config/zsh";
-      enableCompletion = true;
-      autosuggestion.enable = true;
-      syntaxHighlighting.enable = true;
-      initExtra = ''
-        autoload -Uz compinit
-        zmodload zsh/complist
-        compinit -D
-        _comp_options+=(globdots)
-
-        bindkey -v
-
-        zstyle ':completion:*' menu select
-        zstyle ':completion:*' special-dirs true
-
-        setopt inc_append_history
-
-        bindkey -M menuselect 'h' vi-backward-char
-        bindkey -M menuselect 'k' vi-up-line-or-history
-        bindkey -M menuselect 'l' vi-forward-char
-        bindkey -M menuselect 'j' vi-down-line-or-history
-
-        bindkey -v '^?' backward-delete-char
-      '';
-      shellAliases = {
-        ls = "ls --color -F";
-        la = "ls -lAhX --group-directories-first";
-        wget = "wget --hsts-file=$XDG_DATA_HOME/wget-hsts";
-        dof = "git --git-dir=$HOME/.dotfiles --work-tree=$HOME";
-      };
-      historySubstringSearch.enable = true;
-      history = {
-        size = 10000;
-        ignoreDups = true;
-        path = "${config.xdg.dataHome}/zsh/history";
-      };
     };
 
     home-manager.enable = true;
@@ -412,7 +353,5 @@
     };
   };
 
-  services = {
-    syncthing.enable = true;
-  };
+  services.syncthing.enable = true;
 }
