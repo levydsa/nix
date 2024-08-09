@@ -285,11 +285,6 @@
       ];
     };
 
-    starship = {
-      enable = true;
-      enableZshIntegration = true;
-    };
-
     neovim = {
       package = inputs.neovim-nightly.packages.${system}.neovim;
       enable = true;

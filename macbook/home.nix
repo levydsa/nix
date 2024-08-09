@@ -4,6 +4,7 @@
   imports = [
     inputs.mac-app-util.homeManagerModules.default
     ../shared/home/nvim.nix
+    ../shared/home/starship.nix
   ];
 
   home = {
@@ -44,11 +45,6 @@
   };
 
   programs = {
-    starship = {
-      enable = true;
-      enableZshIntegration = true;
-    };
-
     direnv = {
       enable = true;
       nix-direnv.enable = true;
