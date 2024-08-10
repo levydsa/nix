@@ -101,13 +101,13 @@
           ];
         };
 
-        nixosConfigurations.macvm = pkgs.lib.nixosSystem {
+        nixosConfigurations.vm = pkgs.lib.nixosSystem {
           specialArgs = { inherit inputs; };
           modules = [
             home-manager.nixosModules.default
             { home-manager = common-home; }
-            { home-manager.users.dante = import ./thinkpad/home.nix; }
-            ./macbook-vm/configuration.nix
+            { home-manager.users.dante = import ./vm/home.nix; }
+            ./vm/configuration.nix
           ];
         };
       };
