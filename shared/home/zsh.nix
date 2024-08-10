@@ -3,7 +3,7 @@
   programs.zsh = {
     enable = true;
     autocd = true;
-    dotDir = "${config.xdg.dataHome}/zsh";
+    dotDir = ".config/zsh";
     enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
@@ -37,7 +37,7 @@
     history = {
       size = 10000;
       ignoreDups = true;
-      path = "${config.programs.zsh.dotDir}/history";
+      path = "${config.xdg.dataHome}/zsh/history";
     };
   };
 }

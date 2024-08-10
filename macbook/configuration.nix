@@ -25,6 +25,8 @@
     ]; })
   ];
 
+  programs.zsh.enable = true;
+
   services.nix-daemon.enable = true;
 
   homebrew = {
