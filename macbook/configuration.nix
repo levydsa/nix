@@ -1,20 +1,9 @@
 { pkgs, ... }:
 {
-  nixpkgs = {
-    config = {
-      allowUnsupportedSystem = true;
-      allowUnfree = true;
-    };
-  };
+  nixpkgs.config.allowUnfree = true;
+  services.nix-daemon.enable = true;
 
   users.users.levy.home = "/Users/levy";
-
-  nix = {
-    settings = {
-      experimental-features = [ "nix-command" "flakes" ];
-      use-xdg-base-directories = true;
-    };
-  };
 
   fonts.packages = with pkgs; [
     noto-fonts
@@ -27,21 +16,19 @@
 
   programs.zsh.enable = true;
 
-  services.nix-daemon.enable = true;
-
   homebrew = {
     enable = true;
-    autoUpdate = true;
+    onActivation = {
+      upgrade = true;
+      autoUpdate = true;
+    };
     casks = [
       "android-studio"
+      "utm"
       "hammerspoon"
       "mac-mouse-fix"
       "eloston-chromium"
-      "amethyst"
-      "alfred"
-      "logseq"
       "discord"
-      "iina"
     ];
   };
 }

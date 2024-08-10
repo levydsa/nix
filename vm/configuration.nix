@@ -1,6 +1,5 @@
 { pkgs
 , inputs
-, lib
 , ...
 }: {
   imports = [
@@ -34,28 +33,18 @@
   nixpkgs.config.allowUnfree = true;
 
   networking = {
-    hostName = "macvm";
+    hostName = "vm";
     networkmanager.enable = true;
     firewall = {
       enable = true;
       allowedTCPPorts = [ 3000 4000 8080 ];
-      allowedUDPPortRanges = [
-        { from = 4000; to = 4007; }
-        { from = 8000; to = 8010; }
-      ];
     };
   };
 
-  nix = {
-    settings = {
-      experimental-features = [ "nix-command" "flakes" ];
-      use-xdg-base-directories = true;
-    };
-    gc = {
-      automatic = true;
-      dates = "daily";
-      options = "--delete-older-than 2d";
-    };
+  nix.gc = {
+    automatic = true;
+    dates = "daily";
+    options = "--delete-older-than 2d";
   };
 
   i18n.defaultLocale = "en_US.UTF-8";

@@ -36,14 +36,18 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    mac-app-util.url = "github:hraban/mac-app-util";
+    mac-app-util = { 
+      url = "github:hraban/mac-app-util";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
   };
   outputs =
     { self, flake-utils, home-manager, nixpkgs, darwin, mac-app-util, ... } @ inputs:
     (flake-utils.lib.eachDefaultSystem (system:
     let
       pkgs = import nixpkgs { inherit system; };
-      home = {
+      common-home = {
         extraSpecialArgs = { inherit inputs system; };
         useGlobalPkgs = true;
         useUserPackages = true;
@@ -72,35 +76,39 @@
         darwinConfigurations.macbook = darwin.lib.darwinSystem {
           system = "aarch64-darwin";
           modules = [
-            ./macbook/configuration.nix
             mac-app-util.darwinModules.default
             home-manager.darwinModules.home-manager
+            { home-manager = common-home; }
             {
-              home-manager = { users.levy = import ./macbook/home.nix; } // home;
+              home-manager.sharedModules = [
+                inputs.mac-app-util.homeManagerModules.default
+              ];
             }
+            { home-manager.users.levy = import ./macbook/home.nix; }
+            ./macbook/configuration.nix
+            ./shared/nix.nix
           ];
         };
-        nixosConfigurations = {
-          box = nixpkgs.lib.nixosSystem {
-            specialArgs = { inherit inputs; };
-            modules = [
-              ./thinkpad/configuration.nix
-              home-manager.nixosModules.default
-              {
-                home-manager = { users.dante = import ./thinkpad/home.nix; } // home;
-              }
-            ];
-          };
-          macvm = nixpkgs.lib.nixosSystem {
-            specialArgs = { inherit inputs; };
-            modules = [
-              ./macbook-vm/configuration.nix
-              home-manager.nixosModules.default
-              {
-                home-manager = { users.dante = import ./macbook-vm/home.nix; } // home;
-              }
-            ];
-          };
+
+        nixosConfigurations.box = pkgs.lib.nixosSystem {
+          specialArgs = { inherit inputs; };
+          modules = [
+            home-manager.nixosModules.default
+            { home-manager = common-home; }
+            { home-manager.users.dante = import ./thinkpad/home.nix; }
+            ./thinkpad/configuration.nix
+            ./shared/nix.nix
+          ];
+        };
+
+        nixosConfigurations.macvm = pkgs.lib.nixosSystem {
+          specialArgs = { inherit inputs; };
+          modules = [
+            home-manager.nixosModules.default
+            { home-manager = common-home; }
+            { home-manager.users.dante = import ./thinkpad/home.nix; }
+            ./macbook-vm/configuration.nix
+          ];
         };
       };
     }));

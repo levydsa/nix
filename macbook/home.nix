@@ -1,8 +1,5 @@
-{ config, pkgs, inputs, ... }: {
-  nixpkgs.config.allowUnfree = true;
-
+{ config, pkgs, ... }: {
   imports = [
-    inputs.mac-app-util.homeManagerModules.default
     ../shared/home/nvim.nix
     ../shared/home/starship.nix
     ../shared/home/alacritty.nix

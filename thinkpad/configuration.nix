@@ -1,6 +1,5 @@
 { pkgs
 , inputs
-, lib
 , ...
 }: {
   imports = [
@@ -8,12 +7,6 @@
   ];
 
   boot = {
-    # kernel = {
-    #   sysctl = {
-    #     "kernel.perf_event_paranoid" = -1;
-    #     "kernel.kptr_restrict" = lib.mkForce 0;
-    #   };
-    # };
     kernelPackages = pkgs.linuxPackages_zen;
     loader = {
       efi = {
@@ -39,7 +32,6 @@
 
   hardware = {
     sane.enable = true;
-    # opentabletdriver.enable = true;
     bluetooth = {
       enable = true;
       powerOnBoot = true;
@@ -49,7 +41,6 @@
   powerManagement = {
     enable = true;
     cpuFreqGovernor = "ondemand";
-    # powertop.enable = true;
   };
 
   networking = {
@@ -162,7 +153,6 @@
       ripgrep
       fd
 
-      greetd.tuigreet
       cpupower-gui
 
       just
