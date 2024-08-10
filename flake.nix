@@ -90,7 +90,7 @@
           ];
         };
 
-        nixosConfigurations.box = pkgs.lib.nixosSystem {
+        nixosConfigurations.box = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs; };
           modules = [
             home-manager.nixosModules.default
@@ -101,7 +101,7 @@
           ];
         };
 
-        nixosConfigurations.vm = pkgs.lib.nixosSystem {
+        nixosConfigurations.vm = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs; };
           modules = [
             home-manager.nixosModules.default
