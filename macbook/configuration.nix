@@ -16,6 +16,10 @@
 
   programs.zsh.enable = true;
 
+  environment.systemPackages = with pkgs; [
+    libiconv
+  ];
+
   homebrew = {
     enable = true;
     onActivation = {
@@ -24,6 +28,7 @@
     };
     casks = [
       "android-studio"
+      "vmware-fusion"
       "utm"
       "hammerspoon"
       "mac-mouse-fix"
