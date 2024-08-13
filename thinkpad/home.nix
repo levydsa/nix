@@ -8,6 +8,8 @@
     ../shared/home/zsh.nix
     ../shared/home/river.nix
     ../shared/home/hyprland.nix
+    ../shared/home/wofi.nix
+    ../shared/home/python.nix
   ];
 
   targets.genericLinux.enable = true;
@@ -28,10 +30,7 @@
       TEXMFVAR = "${xdg.cacheHome}/texlive/texmf-var";
       TEXMFCONFIG = "${xdg.configHome}/texlive/texmf-config";
 
-      JULIA_DEPOT_PATH = "${xdg.dataHome}/julia:$JULIA_DEPOT_PATH";
-
-      # Puts '.python_history' somewhere else
-      PYTHONSTARTUP = "${xdg.configHome}/python/startup.py";
+      JULIA_DEPOT_PATH = "${xdg.dataHome}/julia";
 
       ANDROID_HOME = "${config.home.homeDirectory}/Android/Sdk";
       GRADLE_USER_HOME = "${xdg.dataHome}/gradle";
@@ -57,9 +56,7 @@
       hledger
 
       swaybg
-      alacritty
 
-      python3
       zig
       rustup
       protobuf
@@ -76,9 +73,6 @@
 
       wl-clipboard
       dunst
-      slurp
-      grim
-      wofi
     ];
 
     stateVersion = "23.11";
@@ -111,6 +105,10 @@
     };
 
   programs = {
+    alacritty.settings = {
+      font.size = 9;
+    };
+
     ags = {
       enable = true;
 
@@ -176,7 +174,7 @@
     gtk2.configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
     cursorTheme = {
       package = pkgs.vanilla-dmz;
-      size = 24;
+      size = 12;
       name = "DMZ-Black";
     };
     theme = {

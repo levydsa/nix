@@ -2,9 +2,6 @@
   programs.alacritty = {
     enable = true;
     settings = {
-      font.normal.family = "Hack Nerd Font";
-      font.size = 14; 
-
       colors.primary = {
         background = "#080808";
         foreground = "#c6c6c6";

@@ -1,0 +1,43 @@
+* {
+  background-color: transparent;
+  border: none;
+  color: white;
+}
+
+window {
+  font-family: sans-serif;
+  font-size: 13px;
+
+  margin: 0;
+  background-color: alpha(black, 0.8);
+
+  border: 2px solid alpha(white, 0.2);
+  border-radius: 10px;
+}
+
+#input {
+  margin: 2px;
+  border: 1px solid white;
+}
+
+#outer-box {
+  margin: 1em;
+}
+
+#img {
+  margin: 0.5em;
+}
+
+#scroll {
+  margin: 1em 2em;
+}
+
+#entry {
+  margin: 0.1em;
+}
+
+#entry:selected {
+  border-bottom: 1px solid white;
+  border-radius: 5px;
+}
+

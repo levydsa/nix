@@ -56,13 +56,6 @@
     };
   };
 
-  nix = {
-    settings = {
-      experimental-features = [ "nix-command" "flakes" ];
-      use-xdg-base-directories = true;
-    };
-  };
-
   i18n.defaultLocale = "en_US.UTF-8";
 
   time = {
@@ -126,10 +119,7 @@
 
   environment = {
     shells = with pkgs; [ zsh ];
-    pathsToLink = [
-      "/share/zsh"
-      "/share/wayland-sessions"
-    ];
+    pathsToLink = [ "/share/zsh" "/share/wayland-sessions" ];
 
     localBinInPath = true;
     sessionVariables.NIXOS_OZONE_WL = 1;

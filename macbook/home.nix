@@ -6,6 +6,11 @@
     ../shared/home/zsh.nix
   ];
 
+  programs.alacritty.settings = {
+      font.normal.family = "Hack Nerd Font";
+      font.size = 14;
+  };
+
   home = {
     username = "levy";
     homeDirectory = "/Users/${config.home.username}";

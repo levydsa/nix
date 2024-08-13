@@ -1,5 +1,6 @@
 { pkgs, ... }:
 {
+  home.packages = with pkgs; [ slurp grim ];
   wayland.windowManager.hyprland = {
     enable = true;
     systemd.enable = true;
