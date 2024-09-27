@@ -1,6 +1,7 @@
 { pkgs, ... }:
 {
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.allowBroken = true;
   services.nix-daemon.enable = true;
 
   users.users.levy.home = "/Users/levy";
@@ -20,6 +21,8 @@
     libiconv
   ];
 
+  security.pam.enableSudoTouchIdAuth = true;
+
   homebrew = {
     enable = true;
     onActivation = {
@@ -27,6 +30,7 @@
       autoUpdate = true;
     };
     casks = [
+      "obs"
       "android-studio"
       "vmware-fusion"
       "utm"
@@ -34,6 +38,7 @@
       "mac-mouse-fix"
       "eloston-chromium"
       "discord"
+      "amethyst"
     ];
   };
 }

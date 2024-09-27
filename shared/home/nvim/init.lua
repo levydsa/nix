@@ -199,16 +199,17 @@ require("lazy").setup({
         opts = {
             servers = {
                 rust_analyzer = {
-                    flags = { debounce_text_changes = 150 },
                     settings = {
                         imports = {
                             granularity = { group = "module" },
                             prefix = "self",
                         },
-                        cargo = { buildScripts = { enable = true } },
+                        cargo = {
+                            buildScripts = { enable = true },
+                            loadOutDirsFromCheck = { enable = true },
+                        },
                         procMacro = { enable = true },
-                        -- cachePriming = { enable = false },
-                        diagnostics = { experimental = { enable = true } },
+                        -- diagnostics = { experimental = { enable = true } },
                         checkOnSave = { enable = false }
                     },
                 },
@@ -226,6 +227,7 @@ require("lazy").setup({
                 clangd = {},
                 jdtls = {},
                 templ = {},
+                phpactor = {},
                 tsserver = {},
                 gopls = {},
                 zls = {},
@@ -244,9 +246,38 @@ require("lazy").setup({
 
             vim.opt.completeopt = { "menu", "menuone", "noselect" }
             vim.opt.shortmess:append "c"
+            vim.opt.signcolumn = 'yes'
 
             lspkind.init {}
             fidget.setup {}
+
+            lspconfig.util.default_config.capabilities = vim.tbl_deep_extend(
+                'force',
+                lspconfig.util.default_config.capabilities,
+                require('cmp_nvim_lsp').default_capabilities()
+            )
+
+            vim.api.nvim_create_autocmd('LspAttach', {
+                desc = 'LSP actions',
+                callback = function(event)
+                    local opts = { buffer = event.buf }
+
+                    vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+                    vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+                    vim.keymap.set("n", "<leader>gd", vim.lsp.buf.declaration, opts)
+                    vim.keymap.set("n", "<leader>gi", vim.lsp.buf.implementation, opts)
+                    vim.keymap.set("n", "<leader>gf", vim.lsp.buf.format, opts)
+                    vim.keymap.set("n", "<leader>ga", vim.lsp.buf.code_action, opts)
+
+                    vim.keymap.set("n", "<leader>g.", function()
+                        vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({}), {})
+                    end, opts)
+                end,
+            })
+
+            for server, config in pairs(opts.servers) do
+                lspconfig[server].setup(config)
+            end
 
             cmp.setup({
                 sources = cmp.config.sources({
@@ -283,50 +314,6 @@ require("lazy").setup({
                     { name = 'cmdline' }
                 })
             })
-
-            local on_attach = function(client, buffer)
-                local opts = { buffer = buffer }
-                vim.bo[buffer].omnifunc = 'v:lua.vim.lsp.omnifunc'
-
-                vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-                vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-                vim.keymap.set("n", "<leader>gd", vim.lsp.buf.declaration, opts)
-                vim.keymap.set("n", "<leader>gi", vim.lsp.buf.implementation, opts)
-                vim.keymap.set("n", "<leader>gf", vim.lsp.buf.format, opts)
-                vim.keymap.set("n", "<leader>ga", vim.lsp.buf.code_action, opts)
-
-                vim.keymap.set("n", "<leader>g.", function()
-                    vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({}), {})
-                end, opts)
-            end
-
-            local capabilities = vim.tbl_deep_extend(
-                "force",
-                vim.lsp.protocol.make_client_capabilities(),
-                require('cmp_nvim_lsp').default_capabilities()
-            )
-            capabilities.workspace.didChangeWatchedFiles.dynamicRegistration = false
-
-            for server, config in pairs(opts.servers) do
-                lspconfig[server].setup(
-                    vim.tbl_deep_extend("error", {}, {
-                        capabilities = capabilities,
-                        on_attach = on_attach,
-                    }, config)
-                )
-            end
-
-            vim.lsp.util.apply_text_document_edit =
-                function(text_document_edit, index, offset_encoding)
-                    local text_document = text_document_edit.textDocument
-                    local bufnr = vim.uri_to_bufnr(text_document.uri)
-                    if offset_encoding == nil then
-                        vim.notify_once('apply_text_document_edit must be called with valid offset encoding',
-                            vim.log.levels.WARN)
-                    end
-
-                    vim.lsp.util.apply_text_edits(text_document_edit.edits, bufnr, offset_encoding)
-                end
         end,
     },
     {

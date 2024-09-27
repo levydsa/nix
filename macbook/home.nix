@@ -33,6 +33,7 @@
       hledger
       protobuf
 
+      go
       zig
       rustup
 
@@ -57,6 +58,7 @@
 
     git = {
       enable = true;
+      lfs.enable = true;
       userName = "Levy A.";
       userEmail = "levyddsa@gmail.com";
     };
