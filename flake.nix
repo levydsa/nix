@@ -46,7 +46,14 @@
     { self, flake-utils, home-manager, nixpkgs, darwin, mac-app-util, ... } @ inputs:
     (flake-utils.lib.eachDefaultSystem (system:
     let
-      pkgs = import nixpkgs { inherit system; };
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [
+          (final: prev: {
+            _7zz = prev._7zz.override { useUasm = true; };
+          })
+        ];
+      };
       common-home = {
         extraSpecialArgs = { inherit inputs system; };
         useGlobalPkgs = true;

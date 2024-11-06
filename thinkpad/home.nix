@@ -1,7 +1,7 @@
 { config, pkgs, inputs, system, ... }: {
 
   imports = [
-    inputs.ags.homeManagerModules.default
+    # inputs.ags.homeManagerModules.default
     ../shared/home/nvim.nix
     ../shared/home/starship.nix
     ../shared/home/alacritty.nix
@@ -39,21 +39,21 @@
     };
 
     packages = with pkgs; [
-      google-chrome
-      weechat
-      thunderbird
-      keepassxc
-      zathura
-      webcord
-      calibre
-      krita
-      reaper
-      obsidian
-      inkscape
-      obs-studio
-      mpv
-      wifi-qr
-      hledger
+      # google-chrome
+      # weechat
+      # thunderbird
+      # keepassxc
+      # zathura
+      # webcord
+      # calibre
+      # krita
+      # reaper
+      # obsidian
+      # inkscape
+      # obs-studio
+      # mpv
+      # wifi-qr
+      # hledger
 
       swaybg
 
@@ -61,15 +61,15 @@
       rustup
       protobuf
 
-      jdk21
-      gradle
-      android-studio
+      # jdk21
+      # gradle
+      # android-studio
 
-      gdb
-      kdePackages.kcachegrind
-      valgrind
+      # gdb
+      # kdePackages.kcachegrind
+      # valgrind
 
-      slack
+      # slack
 
       wl-clipboard
       dunst
@@ -89,12 +89,12 @@
       };
     in
     {
-      ags = {
-        Service = {
-          Type = "exec";
-          ExecStart = "${inputs.ags.packages.${system}.default}/bin/ags";
-        };
-      } // graphical;
+      # ags = {
+      #   Service = {
+      #     Type = "exec";
+      #     ExecStart = "${inputs.ags.packages.${system}.default}/bin/ags";
+      #   };
+      # } // graphical;
 
       bg = {
         Service = {
@@ -109,16 +109,16 @@
       font.size = 9;
     };
 
-    ags = {
-      enable = true;
+    # ags = {
+    #   enable = true;
 
-      extraPackages = with pkgs; [
-        gtksourceview
-        webkitgtk
-        accountsservice
-        libdbusmenu-gtk3
-      ];
-    };
+    #   extraPackages = with pkgs; [
+    #     gtksourceview
+    #     webkitgtk
+    #     accountsservice
+    #     libdbusmenu-gtk3
+    #   ];
+    # };
 
     direnv = {
       enable = true;

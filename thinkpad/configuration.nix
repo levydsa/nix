@@ -69,7 +69,6 @@
   };
 
   security = {
-    sudo.enable = false;
     doas = {
       enable = true;
       extraRules = [
@@ -115,6 +114,11 @@
     hyprland.enable = true;
     git.enable = true;
     zsh.enable = true;
+  };
+  services.pcscd.enable = true;
+  programs.gnupg.agent = {
+     enable = true;
+     enableSSHSupport = true;
   };
 
   environment = {
@@ -171,7 +175,7 @@
     };
     packages = with pkgs; [
       noto-fonts
-      noto-fonts-cjk
+      noto-fonts-cjk-sans
       hack-font
       source-sans-pro
       source-serif-pro
@@ -201,7 +205,7 @@
       settings = {
         default_session = {
           user = "dante";
-          command = ''${pkgs.hyprland}/bin/hyprland'';
+          command = ''${pkgs.hyprland}/bin/Hyprland'';
         };
       };
     };
