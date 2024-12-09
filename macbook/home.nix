@@ -63,6 +63,7 @@
       userEmail = "levyddsa@gmail.com";
     };
 
+    gpg.enable = true;
     home-manager.enable = true;
   };
 

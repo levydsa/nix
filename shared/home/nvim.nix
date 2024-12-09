@@ -16,6 +16,7 @@
       gnumake
       inputs.zls.packages.${system}.zls
       phpactor
+      gopls
     ];
   };
 

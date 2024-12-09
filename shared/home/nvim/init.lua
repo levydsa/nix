@@ -88,6 +88,11 @@ vim.diagnostic.config {
 
 -- custom indentation per filetype
 local typecmd = {
+    javascript = [[ setlocal ts=2 ]],
+    typescript = [[ setlocal ts=2 ]],
+    typescriptreact = [[ setlocal ts=2 ]],
+    javascriptreact = [[ setlocal ts=2 ]],
+    astro = [[ setlocal ts=2 ]],
     djot       = [[ setlocal ts=2 ]],
     nix        = [[ setlocal ts=2 ]],
     lean       = [[ setlocal ts=2 ]],
@@ -101,6 +106,7 @@ local typecmd = {
     asm        = [[ setlocal ts=2 ]],
     elm        = [[ setlocal ts=2 ]],
     lua        = [[ setlocal ts=4 ]],
+    go         = [[ setlocal ts=4 noet ]],
 }
 
 for filetype, cmd in pairs(typecmd) do
@@ -236,6 +242,8 @@ require("lazy").setup({
                 html = { filetypes = { "html", "templ", "htmldjango" } },
                 htmx = { filetypes = { "html", "templ", "htmldjango" } },
                 tailwindcss = {},
+                astro = {},
+                solargraph = {},
             }
         },
         config = function(_, opts)
@@ -385,10 +393,7 @@ require("lazy").setup({
         dependencies = { "nvim-lua/plenary.nvim" },
         config = function()
             local harpoon = require("harpoon")
-
-            -- REQUIRED
             harpoon:setup()
-            -- REQUIRED
 
             vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
             vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
@@ -402,5 +407,18 @@ require("lazy").setup({
             vim.keymap.set("n", "<C-S-P>", function() harpoon:list():prev() end)
             vim.keymap.set("n", "<C-S-N>", function() harpoon:list():next() end)
         end
-    }
+    },
+    {
+        "davidmh/mdx.nvim",
+        config = true,
+        dependencies = { "nvim-treesitter/nvim-treesitter" }
+    },
+    {
+        "nvim-treesitter/nvim-treesitter-context",
+        config = { enable = true },
+    },
+    {
+        "lewis6991/gitsigns.nvim",
+        config = true,
+    },
 })

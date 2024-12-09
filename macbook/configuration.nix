@@ -39,6 +39,7 @@
       "eloston-chromium"
       "discord"
       "amethyst"
+      "blender"
     ];
   };
 }
