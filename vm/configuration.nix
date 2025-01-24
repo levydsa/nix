@@ -1,32 +1,19 @@
-{ pkgs
-, inputs
-, ...
-}: {
-  imports = [
-    ./hardware.nix
-  ];
+{ pkgs, inputs, ... }:
+{
+  imports = [ ./hardware.nix ];
 
-  system.autoUpgrade = {
-    enable = true;
-    flake = inputs.self.outPath;
-    flags = [ "--update-input" "nixpkgs" "-L" ];
-    dates = "daily";
-    randomizedDelaySec = "45min";
+  virtualisation = {
+    docker.enable = true;
+    vmware.guest.enable = true;
   };
+  hardware.graphics.enable = true;
+  documentation.dev.enable = true;
 
-  boot = {
-    loader = {
-      efi = {
-        canTouchEfiVariables = true;
-        efiSysMountPoint = "/boot";
-      };
-
-      grub = {
-        enable = true;
-        efiSupport = true;
-        useOSProber = true;
-        devices = [ "nodev" ];
-      };
+  boot.loader = {
+    systemd-boot.enable = true;
+    efi = {
+      canTouchEfiVariables = true;
+      efiSysMountPoint = "/boot";
     };
   };
 
@@ -35,21 +22,10 @@
   networking = {
     hostName = "vm";
     networkmanager.enable = true;
-    firewall = {
-      enable = true;
-      allowedTCPPorts = [ 3000 4000 8080 ];
-    };
-  };
-
-  nix.gc = {
-    automatic = true;
-    dates = "daily";
-    options = "--delete-older-than 2d";
   };
 
   i18n.defaultLocale = "en_US.UTF-8";
   time.timeZone = "America/Recife";
-
   console.font = "Lat2-Terminus16";
 
   security = {
@@ -66,34 +42,18 @@
     };
   };
 
-  virtualisation.docker.enable = true;
-  documentation.dev.enable = true;
-
   users = {
     users.dante = {
       isNormalUser = true;
-      extraGroups = [ "wheel" "networkmanager" "video" "adbusers" "docker" ];
+      extraGroups = [ "networkmanager" "video" ];
       hashedPassword = "$y$j9T$.a19aFz63xukXlPCKuCmX.$PEdxJv0Ow1U94JvNE6yZ61QuSqqT0F1.AaEey6rKQy8";
     };
     defaultUserShell = pkgs.zsh;
   };
 
-
-  xdg.portal = {
-    enable = true;
-    wlr.enable = true;
-
-    extraPortals = with pkgs; [
-      xdg-desktop-portal-gtk
-      xdg-desktop-portal-kde
-    ];
-  };
-
   programs = {
     thunar.enable = true;
-    xfconf.enable = true;
     nix-ld.enable = true;
-    river.enable = true;
     git.enable = true;
     zsh.enable = true;
   };
@@ -102,23 +62,8 @@
     shells = with pkgs; [ zsh ];
     pathsToLink = [
       "/share/zsh"
-      "/share/sile"
       "/share/wayland-sessions"
     ];
-    sessionVariables = {
-      XDG_SESSION_TYPE = "wayland";
-      XDG_SESSION_DESKTOP = "sway";
-      XDG_CURRENT_DESKTOP = "sway";
-
-      MOZ_ENABLE_WAYLAND = "1";
-      QT_QPA_PLATFORM = "wayland";
-      SDL_VIDEODRIVER = "wayland";
-      _JAVA_AWT_WM_NONREPARENTING = "1";
-
-      NIXOS_OZONE_WL = 1;
-    };
-
-    localBinInPath = true;
 
     systemPackages = with pkgs; [
       mold
@@ -141,10 +86,32 @@
 
       just
 
-      inputs.flow.packages.${system}.default
       libnotify
 
       brightnessctl
+      dconf
+      xclip
+
+      (pkgs.dmenu.overrideAttrs {
+        src = inputs.dmenu;
+        prePatch = ''
+          sed -i "s@^PREFIX = .*@PREFIX = $out@" config.mk
+        '';
+      })
+
+      (pkgs.dwm.overrideAttrs {
+        src = inputs.dwm;
+        prePatch = ''
+          sed -i "s@^PREFIX = .*@PREFIX = $out@" config.mk
+        '';
+      })
+
+      (pkgs.st.overrideAttrs {
+        src = inputs.st;
+        prePatch = ''
+          sed -i "s@^PREFIX = .*@PREFIX = $out@" config.mk
+        '';
+      })
     ];
   };
 
@@ -160,17 +127,15 @@
     };
     packages = with pkgs; [
       noto-fonts
-      noto-fonts-cjk
+      noto-fonts-cjk-sans
       hack-font
       source-sans-pro
       source-serif-pro
-      (nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })
+      nerd-fonts.symbols-only
     ];
   };
 
   services = {
-    qemuGuest.enable = true;
-    spice-vdagentd.enable = true;
     gvfs.enable = true;
     tumbler.enable = true;
     openssh.enable = true;
@@ -180,15 +145,19 @@
       alsa.enable = true;
       pulse.enable = true;
     };
-    # greetd = {
-    #   enable = true;
-    #   settings = {
-    #     default_session = {
-    #       user = "dante";
-    #       command = ''${pkgs.greetd.tuigreet}/bin/tuigreet -w 50 -c "exec dbus-launch river"'';
-    #     };
-    #   };
-    # };
+    xserver = {
+      enable = true;
+      # displayManager.startx.enable = true;
+      windowManager.dwm = {
+        enable = true;
+        package = pkgs.dwm.overrideAttrs {
+          src = inputs.dwm;
+          prePatch = ''
+            sed -i 's/^PREFIX = .*/PREFIX = $out/' config.mk
+          '';
+        };
+      };
+    };
   };
 
   system.stateVersion = "23.11";

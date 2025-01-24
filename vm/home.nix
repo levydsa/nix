@@ -1,12 +1,10 @@
-{ config, pkgs, inputs, system, ... }: {
-
+{ config, pkgs, ... }:
+{
   imports = [
-    inputs.ags.homeManagerModules.default
     ../shared/home/zsh.nix
     ../shared/home/nvim.nix
     ../shared/home/starship.nix
-    ../shared/home/alacritty.nix
-    ../shared/home/river.nix
+    ../shared/home/python.nix
   ];
 
   targets.genericLinux.enable = true;
@@ -29,9 +27,6 @@
 
       JULIA_DEPOT_PATH = "${xdg.dataHome}/julia:$JULIA_DEPOT_PATH";
 
-      # Puts '.python_history' somewhere else
-      PYTHONSTARTUP = "${xdg.configHome}/python/startup.py";
-
       ANDROID_HOME = "${config.home.homeDirectory}/Android/Sdk";
       GRADLE_USER_HOME = "${xdg.dataHome}/gradle";
 
@@ -39,61 +34,23 @@
     };
 
     packages = with pkgs; [
-      hledger
-
-      swaybg
-      alacritty
-
-      python3
       zig
       rustup
       protobuf
+      # st
 
       wl-clipboard
       dunst
-      slurp
-      grim
-      wofi
     ];
 
     stateVersion = "23.11";
   };
 
-  systemd.user.services =
-    let
-      graphical = {
-        Unit = {
-          PartOf = "graphical-session.target";
-          After = "graphical-session.target";
-        };
-        Install.WantedBy = [ "graphical-session.target" ];
-      };
-    in
-    {
-      ags = {
-        Service = {
-          Type = "exec";
-          ExecStart = "${inputs.ags.packages.${system}.default}/bin/ags";
-        };
-      } // graphical;
-
-      bg = {
-        Service = {
-          Type = "exec";
-          ExecStart = "${pkgs.swaybg}/bin/swaybg -i ${config.home.homeDirectory}/.local/share/wp";
-        };
-      } // graphical;
-    };
-
   programs = {
-    ags = {
+    chromium = {
       enable = true;
-      extraPackages = with pkgs; [
-        gtksourceview
-        webkitgtk
-        accountsservice
-        libdbusmenu-gtk3
-      ];
+      package = pkgs.ungoogled-chromium;
+      commandLineArgs = [ "--enable-features=Vulkan" ];
     };
 
     direnv = {
@@ -106,6 +63,9 @@
       enable = true;
       userName = "Levy A.";
       userEmail = "levyddsa@gmail.com";
+      extraConfig = {
+        safe.directory = "*";
+      };
     };
 
     home-manager.enable = true;
