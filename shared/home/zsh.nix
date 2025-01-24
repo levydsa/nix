@@ -16,10 +16,6 @@
       la = "ls -lAh";
       wget = "wget --hsts-file=$XDG_DATA_HOME/wget-hsts";
       dof = "git --git-dir=$HOME/.dotfiles --work-tree=$HOME";
-      update =
-        pkgs.lib.optionals
-          pkgs.stdenv.isDarwin
-          "darwin-rebuild switch --flake $HOME/Documents/nix";
     };
     syntaxHighlighting.enable = true;
     plugins = [

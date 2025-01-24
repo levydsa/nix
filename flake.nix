@@ -41,6 +41,21 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };
+
+    dwm = {
+      url = "github:levydsa/dwm";
+      flake = false;
+    };
+
+    dmenu = {
+      url = "github:levydsa/dmenu";
+      flake = false;
+    };
+
+    st = {
+      url = "github:levydsa/st";
+      flake = false;
+    };
   };
   outputs =
     { self, flake-utils, home-manager, nixpkgs, darwin, mac-app-util, ... } @ inputs:

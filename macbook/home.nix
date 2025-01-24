@@ -66,6 +66,10 @@
 
     gpg.enable = true;
     home-manager.enable = true;
+
+    zsh = {
+      shellAliases.update = "darwin-rebuild switch --flake $HOME/Documents/nix";
+    };
   };
 
   services.syncthing.enable = true;
