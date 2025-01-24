@@ -1,5 +1,7 @@
 { pkgs, ... }:
 {
+  system.stateVersion = 5;
+
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.allowBroken = true;
   services.nix-daemon.enable = true;
@@ -8,18 +10,18 @@
 
   fonts.packages = with pkgs; [
     noto-fonts
-    noto-fonts-cjk
-    (nerdfonts.override { fonts = [
-      "NerdFontsSymbolsOnly"
-      "Hack"
-    ]; })
+    noto-fonts-cjk-sans
+    nerd-fonts.symbols-only
+    nerd-fonts.hack
   ];
 
   programs.zsh.enable = true;
 
   environment.systemPackages = with pkgs; [
+    nixd
     libiconv
   ];
+  environment.systemPath = [ "/opt/homebrew/bin" ];
 
   security.pam.enableSudoTouchIdAuth = true;
 
@@ -40,6 +42,7 @@
       "discord"
       "amethyst"
       "blender"
+      "ghostty"
     ];
   };
 }

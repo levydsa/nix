@@ -4,8 +4,8 @@
     enableZshIntegration = true;
     settings = {
       format = ''
-$username[@](cyan bold)$hostname$directory$git_branch$git_status$direnv$python
-[\$](bold green) '';
+        $username[@](cyan bold)$hostname$directory$git_branch$git_status$direnv$python
+        [\$](bold green) '';
 
       scan_timeout = 10;
 

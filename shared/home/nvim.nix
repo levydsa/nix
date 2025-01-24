@@ -13,10 +13,12 @@
       jdt-language-server
       nil
       htmx-lsp
-      gnumake
       inputs.zls.packages.${system}.zls
       phpactor
       gopls
+
+      gnumake
+      ripgrep
     ];
   };
 

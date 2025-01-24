@@ -4,11 +4,12 @@
     ../shared/home/starship.nix
     ../shared/home/alacritty.nix
     ../shared/home/zsh.nix
+    ../shared/home/ghostty.nix
   ];
 
   programs.alacritty.settings = {
-      font.normal.family = "Hack Nerd Font";
-      font.size = 14;
+    font.normal.family = "Hack Nerd Font";
+    font.size = 14;
   };
 
   home = {
