@@ -1,22 +1,10 @@
 { pkgs, inputs, ... }:
 {
   programs.neovim = {
+    package = inputs.neovim-nightly.packages.${pkgs.system}.default;
     enable = true;
     defaultEditor = true;
     extraPackages = with pkgs; [
-      vscode-langservers-extracted
-      tailwindcss-language-server
-      lua-language-server
-      kotlin-language-server
-      typescript
-      nodePackages_latest.typescript-language-server
-      jdt-language-server
-      nil
-      htmx-lsp
-      inputs.zls.packages.${system}.zls
-      phpactor
-      gopls
-
       gnumake
       ripgrep
     ];
